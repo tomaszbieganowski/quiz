@@ -1,0 +1,11 @@
+.hello{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hello button{
+    max-width: 200px;
+}
