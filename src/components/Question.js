@@ -16,9 +16,7 @@ const Question = ({data, setAnswer, answers}) => {
   return (
       <div className="question">
         <p>{data.category}</p>
-        <h2>
-            {data.question}
-        </h2>
+        <h2 dangerouslySetInnerHTML={{__html: data.question}}/>
         {
           <>
               {data.answers.map((element, id) => (
@@ -27,9 +25,9 @@ const Question = ({data, setAnswer, answers}) => {
                     setAnswer(data.question, element); 
                     setStyle()
                   }} 
-                  key={id}>
-                  {element}
-                </div>
+                  key={id}
+                  dangerouslySetInnerHTML={{__html: element}}
+                />
               ))}
           </>
         }
