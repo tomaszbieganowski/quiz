@@ -1,17 +1,27 @@
 import "./question.css"
-const Question = (props) => {
-  const data = props.data;
+import { useState } from "react";
 
-  const setAnswers = () => {
-    const answers = [];
-    let correct = data.correct_answer;
-    data.incorrect_answers.forEach(item => answers.push(item));
-    let max = answers.length;
-    let rand =  Math.floor(Math.random() * max);
-    answers.splice(rand, 0, correct);
-    return answers
+const Question = ({data, setAnswer, answers}) => {
+   
+const [selectedAnswer, setSelectedAnswer] = useState(null);
+const [className, setclassName] = useState("answer");
+
+
+  const handleSelected = (element) => {
+    setSelectedAnswer(element);
+    setclassName("answer selected");
+  };
+
+  const checkAnswer = (ans) => {
+    answers.forEach(element => {
+      console.log(element.answer + " === " + ans)
+      if(element.answer === ans){
+        return false;
+      }
+    });
+    return true;
   }
- 
+
   return (
       <div className="question">
         <p>{data.category}</p>
@@ -20,10 +30,12 @@ const Question = (props) => {
         </h2>
         {data.type === "multiple" &&
           <>
-              {setAnswers().map((element, id) => (
-                <h3>
+              {data.answers.map((element, id) => (
+                <div className={checkAnswer(element) && selectedAnswer === element ? className: "answer"} 
+                  onClick={() => {setAnswer(data.question, element); handleSelected(element)}} 
+                  key={id}>
                   {element}
-                </h3>
+                </div>
               ))}
           </>
         }

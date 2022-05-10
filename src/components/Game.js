@@ -1,12 +1,33 @@
 import { useState, useEffect } from "react";
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom"
 
 import Question from './Question';
 
-const Game = ({onStage}) => {
+const Game = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const fitQuestion = (data) => {
+    const questions = [];
+    data.forEach((element) => {
+      let answers = [];
+      let correct = element.correct_answer;
+      element.incorrect_answers.forEach(item => answers.push(item));
+      let max = answers.length;
+      let rand =  Math.floor(Math.random() * max);
+      answers.splice(rand, 0, correct);
+
+      questions.push({
+        category: element.category,
+        question: element.question,
+        answers: answers,
+        correct_answer: element.correct_answer,
+        type: element.type
+      })
+    })
+    setData(questions);
+  }
 
   useEffect(() => {
     const getData = async () => {
@@ -18,7 +39,7 @@ const Game = ({onStage}) => {
           );
         }
         let actualData = await response.json();
-        setData(actualData);
+        fitQuestion(actualData.results);
         setError(null);
       } catch(err) {
         setError(err.message);
@@ -31,11 +52,23 @@ const Game = ({onStage}) => {
   }, [])
 
   const [questionNumber, setQuestionNumber] = useState(0);
+  const [userAnswers, setUserAnswer] = useState([]);
   const [previousButtonState, setPreviousButton] = useState(false);
   const [nextButtonState, setNextButton] = useState(true);
   
   const getQuestion = (arr) => {
     return arr.find((el, i) => i === questionNumber);
+  }
+
+  const handleAnswer = (question, answer) =>{
+    let answers = userAnswers;
+    userAnswers.forEach((element) => {
+      if(element.question === question){
+        userAnswers.splice(element, 1);
+      }
+    })
+    answers.push({question: question, answer: answer})
+    setUserAnswer(answers);
   }
 
   const previousQuestion = () => {
@@ -50,7 +83,7 @@ const Game = ({onStage}) => {
   const nextQuestion = () => {
     setQuestionNumber(questionNumber + 1)
     setPreviousButton(true)
-    if(questionNumber < data.results.length-2){
+    if(questionNumber < data.length-2){
       setNextButton(true)
     }else{
       setNextButton(false)
@@ -65,7 +98,7 @@ const Game = ({onStage}) => {
       )}
       {data && 
       <div className="question">
-          <Question data={getQuestion(data.results)} />
+          <Question data={getQuestion(data)} setAnswer={handleAnswer} answers={userAnswers}/>
       </div>
       }
       <div className="control">
