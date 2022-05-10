@@ -15,16 +15,9 @@ body {
   margin: 30px auto;
   overflow: auto;
   min-height: 200px;
-  border: 1px solid steelblue;
+  border: 1px solid #2f4f4f;
   padding: 20px;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
-}
-
-.control{
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  margin-top: auto;
 }

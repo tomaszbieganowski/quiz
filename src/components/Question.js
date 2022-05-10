@@ -2,25 +2,16 @@ import "./question.css"
 import { useState } from "react";
 
 const Question = ({data, setAnswer, answers}) => {
-   
-const [selectedAnswer, setSelectedAnswer] = useState(null);
-const [className, setclassName] = useState("answer");
 
+  const [updateAnswer, setUpdateAnswer] = useState([]);
 
-  const handleSelected = (element) => {
-    setSelectedAnswer(element);
-    setclassName("answer selected");
-  };
-
-  const checkAnswer = (ans) => {
-    answers.forEach(element => {
-      console.log(element.answer + " === " + ans)
-      if(element.answer === ans){
-        return false;
-      }
+  const setStyle = () => {
+    let arr = [] ;
+    answers.forEach(x => {
+      arr.push(x.answer)
     });
-    return true;
-  }
+    setUpdateAnswer(arr);
+  };
 
   return (
       <div className="question">
@@ -28,11 +19,14 @@ const [className, setclassName] = useState("answer");
         <h2>
             {data.question}
         </h2>
-        {data.type === "multiple" &&
+        {
           <>
               {data.answers.map((element, id) => (
-                <div className={checkAnswer(element) && selectedAnswer === element ? className: "answer"} 
-                  onClick={() => {setAnswer(data.question, element); handleSelected(element)}} 
+                <div className={updateAnswer.indexOf(element) >= 0 ? "answer selected" : "answer"} 
+                  onClick={() => {
+                    setAnswer(data.question, element); 
+                    setStyle()
+                  }} 
                   key={id}>
                   {element}
                 </div>

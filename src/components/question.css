@@ -13,15 +13,18 @@
 .answer{
     margin: 3px 0 3px 0;
     padding: 8px;
+    color:black;
     cursor: pointer;
     transition: .3s;
 }
 .answer:hover{
-    background-color: #5cb85c;
+    background-color: #447b91;
+    color: white;
     border-radius: 10px;
 }
 
 .selected{
-    background-color: #5cb85c;
+    background-color: #26586b;
+    color: white;
     border-radius: 10px;
 }

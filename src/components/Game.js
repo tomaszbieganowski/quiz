@@ -1,12 +1,18 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom"
 
+import './game.css'
 import Question from './Question';
 
 const Game = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [questionNumber, setQuestionNumber] = useState(0);
+  const [userAnswers, setUserAnswer] = useState([]);
+  const [previousButtonState, setPreviousButton] = useState(false);
+  const [nextButtonState, setNextButton] = useState(true);
+  const [submitAnswer, setSubmitAnswer] = useState(false);
 
   const fitQuestion = (data) => {
     const questions = [];
@@ -50,49 +56,42 @@ const Game = () => {
     }
     getData()
   }, [])
-
-  const [questionNumber, setQuestionNumber] = useState(0);
-  const [userAnswers, setUserAnswer] = useState([]);
-  const [previousButtonState, setPreviousButton] = useState(false);
-  const [nextButtonState, setNextButton] = useState(true);
   
   const getQuestion = (arr) => {
     return arr.find((el, i) => i === questionNumber);
   }
 
-  const handleAnswer = (question, answer) =>{
+  const handleAnswer = (question, answer) => {
     let answers = userAnswers;
     userAnswers.forEach((element) => {
       if(element.question === question){
-        userAnswers.splice(element, 1);
+        userAnswers.splice(userAnswers.indexOf(element), 1);
       }
     })
     answers.push({question: question, answer: answer})
     setUserAnswer(answers);
-  }
-
-  const previousQuestion = () => {
-    setQuestionNumber(questionNumber - 1)
-    setNextButton(true)
-    if(questionNumber < 2){
-      setPreviousButton(false)
+    if(userAnswers.length === data.length){
+      setSubmitAnswer(true);
     }else{
-      setPreviousButton(true)
+      setSubmitAnswer(false);
     }
   }
-  const nextQuestion = () => {
-    setQuestionNumber(questionNumber + 1)
-    setPreviousButton(true)
-    if(questionNumber < data.length-2){
-      setNextButton(true)
-    }else{
-      setNextButton(false)
+
+  const goToQuestion = (id) => {
+    setQuestionNumber(id);
+    setNextButton(true);
+    setPreviousButton(true);
+    if(id < 1){
+      setPreviousButton(false);
+    }
+    if(id >= data.length-1){
+      setNextButton(false);
     }
   }
 
   return (
     <div className="wrapper">
-      {loading && <span>A moment please...</span>}
+      {loading && <span>Loading data...</span>}
       {error && (
         <div>{`There is a problem fetching the data - ${error}`}</div>
       )}
@@ -102,12 +101,34 @@ const Game = () => {
       </div>
       }
       <div className="control">
-        <button className="btn btn-success" onClick={previousQuestion} disabled={!previousButtonState}>previous</button>
-        <Link to="/score">
-          <button className="btn btn-dark">submit</button>
-        </Link>
-        <button className="btn btn-success" onClick={nextQuestion} disabled={!nextButtonState}>next</button>
+        <button className="btn btn-success" 
+          onClick={()=>goToQuestion(questionNumber-1)} 
+          disabled={!previousButtonState}>
+            previous
+        </button>
+        <button className="btn btn-success" 
+          onClick={()=>goToQuestion(questionNumber+1)} 
+          disabled={!nextButtonState}>
+            next
+        </button>
       </div>
+      <p className="questionNumbersTitle">Question number</p>
+      <div className="questionNumbers">
+        {data&& data.map((element, id) => (
+                <div className={id === questionNumber ? "questionNumber questionNumberActive" : "questionNumber"}
+                  key={id}
+                  onClick={() => goToQuestion(id)}>
+                  {id+1}
+                </div>
+              ))
+        }
+      </div>
+      <Link to="/score">
+          <button className="btn btn-dark"
+          disabled={!submitAnswer}>
+            submit
+          </button>
+      </Link>
     </div>
   )
 }
