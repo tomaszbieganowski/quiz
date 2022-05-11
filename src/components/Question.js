@@ -1,10 +1,11 @@
-import "./question.css"
+import "./Question.css"
 import { useState } from "react";
 
 const Question = ({data, setAnswer, answers}) => {
 
   const [updateAnswer, setUpdateAnswer] = useState([]);
 
+  //setting the responses as they are in the GAME component
   const setStyle = () => {
     let arr = [] ;
     answers.forEach(x => {

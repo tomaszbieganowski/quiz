@@ -1,4 +1,4 @@
-.hello{
+.score{
     width: 500px;
     height: 300px;
     background-color: white;
@@ -10,8 +10,4 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-}
-
-.hello button{
-    max-width: 200px;
 }

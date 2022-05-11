@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom"
 
-import './game.css'
+import './Game.css'
 import Question from './Question';
+import Score from './Score';
 
 const Game = () => {
+
+  //properties
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,7 +15,9 @@ const Game = () => {
   const [previousButtonState, setPreviousButton] = useState(false);
   const [nextButtonState, setNextButton] = useState(true);
   const [submitAnswer, setSubmitAnswer] = useState(false);
+  const [openScore, setOpenScore] = useState(false);
 
+  //creating an appropriate question model
   const fitQuestion = (data) => {
     const questions = [];
     data.forEach((element) => {
@@ -35,10 +39,11 @@ const Game = () => {
     setData(questions);
   }
 
+  //downloading data from endpoint
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await fetch(`https://opentdb.com/api.php?amount=5`);
+        const response = await fetch(process.env.REACT_APP_QUESTIONS);
         if (!response.ok) {
           throw new Error(
             `Error: ${response.status}`
@@ -57,10 +62,12 @@ const Game = () => {
     getData()
   }, [])
   
+  //retrieve a question depending on the question number from the variable
   const getQuestion = (arr) => {
     return arr.find((el, i) => i === questionNumber);
   }
 
+  //user response handling
   const handleAnswer = (question, answer) => {
     let answers = userAnswers;
     userAnswers.forEach((element) => {
@@ -77,6 +84,7 @@ const Game = () => {
     }
   }
 
+  //operation of buttons for switching questions
   const goToQuestion = (id) => {
     setQuestionNumber(id);
     setNextButton(true);
@@ -123,12 +131,18 @@ const Game = () => {
               ))
         }
       </div>
-      <Link to="/score">
           <button className="btn btn-dark"
-          disabled={!submitAnswer}>
+            disabled={!submitAnswer}
+            onClick={()=>{
+              setOpenScore(true);
+            }}>
             submit
           </button>
-      </Link>
+          {openScore && 
+          <Score 
+            Questions={data}
+            Answers={userAnswers} 
+          />}
     </div>
   )
 }
